@@ -1,4 +1,4 @@
-function [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo)
+function [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo, plot)
 
 
     r_p = geo(1);
@@ -34,7 +34,7 @@ function [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inv
     
     robot_inv = [wheel_1_inv; wheel_2_inv; castor_inv]; 
     
-    [T, acc_x_inv, acc_y_inv, acc_z_inv, robot_angle] = plot_robot_3d(robot_inv,'r',1);
+    [T, acc_x_inv, acc_y_inv, acc_z_inv, robot_angle] = plot_robot_3d(robot_inv,'r',plot);
 
     acc_inv = [acc_x_inv, acc_y_inv, acc_z_inv];
     
@@ -58,7 +58,7 @@ function [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inv
     
     robot_opt = [wheel_1_opt; wheel_2_opt; castor_opt];
     
-    [T, acc_x_opt, acc_y_opt, acc_z_opt, robot_angle] = plot_robot_3d(robot_opt,'m',1);
+    [T, acc_x_opt, acc_y_opt, acc_z_opt, robot_angle] = plot_robot_3d(robot_opt,'m',plot);
 
     acc_opt = [acc_x_opt, acc_y_opt, acc_z_opt];
     

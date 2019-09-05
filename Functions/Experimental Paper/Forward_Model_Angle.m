@@ -1,4 +1,4 @@
-function [wheels, acc] = Forward_Model_Angle(alpha, omega, pipe_angle, geo)
+function [wheels, acc] = Forward_Model_Angle(alpha, omega, pipe_angle, geo, plot)
 
     % Rotation for w angle
     rot_ax = [0 1 0];
@@ -27,7 +27,7 @@ function [wheels, acc] = Forward_Model_Angle(alpha, omega, pipe_angle, geo)
     robot(2,:) =R_pipe*robot(2,:)';
     robot(3,:) =R_pipe*robot(3,:)';
 
-    [T, acc_x, acc_y, acc_z, robot_angle] = plot_robot_3d(robot,'g',1);
+    [T, acc_x, acc_y, acc_z, robot_angle] = plot_robot_3d(robot,'g',plot);
 
     
     wheels = [wheel_1, wheel_2, castor];

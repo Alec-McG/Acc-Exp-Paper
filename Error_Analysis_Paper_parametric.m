@@ -10,7 +10,7 @@ folder = '/GIFS';
 r_p         = 250;
 pipe_length = 500;
 % Create Cylinder
-pipe_angle = 10*pi/180;
+pipe_angle = linspace(1,10,10)*pi/180;
 
 pipe_centre = [0  0 0];
 %pipe_centre2 = [0 pipe_length*cos(pipe_angle) pipe_length*sin(pipe_angle)];
@@ -29,7 +29,7 @@ Y_p = 0.5*pipe_length;
 % end
 %% Angles
 %W_sim = linspace(1,355,60);
-A_sim = linspace(1,359,100);
+A_sim = linspace(5,350,100);
 %A_sim(1:length(W_sim))  = 30;
 W_sim(1:length(A_sim)) = 135;
 
@@ -59,137 +59,153 @@ W_pipe = [    0     -rot_ax_pipe(3)    rot_ax_pipe(2)
          rot_ax_pipe(3)      0   -rot_ax_pipe(1)
         -rot_ax_pipe(2)      rot_ax_pipe(1)    0];
     
+plot_bot = 0;
 
-for i = 1:length(A_sim) 
-    clf
+for ii = 1:10
+    for i = 1:length(A_sim) 
         
-    a_sim = A_sim(i)*pi/180;
-    w_sim = W_sim(i)*pi/180;
-    
-    % Right and Left side of pipe - Assuming known
-    
-    if (1 < W_sim(i) && W_sim(i) < 179 ) %Right Side
-        side = 0;
-        
-    elseif (-179< W_sim(i) && W_sim(i) < -1 || 181 < W_sim(i) && W_sim(i) < 359 ) %Left Side
-        side = 1;
-        
-    else % Top or Bottom 
-        side = 0;        
-        
+
+
+        a_sim = A_sim(i)*pi/180;
+        w_sim = W_sim(i)*pi/180;
+
+        % Right and Left side of pipe - Assuming known
+
+        if (1 < W_sim(i) && W_sim(i) < 179 ) %Right Side
+            side = 0;
+
+        elseif (-179< W_sim(i) && W_sim(i) < -1 || 181 < W_sim(i) && W_sim(i) < 359 ) %Left Side
+            side = 1;
+
+        else % Top or Bottom 
+            side = 0;        
+
+        end
+
+        geo(5) = side;
+
+        % Forward Model
+
+        [wheel_sim, acc_sim] = Forward_Model_Angle(a_sim, w_sim, pipe_angle(ii), geo, plot_bot);
+
+        acc_x = acc_sim(1);
+        acc_y = acc_sim(2);
+        acc_z = acc_sim(3);
+
+        hold on   
+
+        % Inverse Model + Optimisation - (Assuming Horizontal Pipe)
+
+        [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo, plot_bot);
+
+        % Plot Inverse Model/Opt
+
+
+
+        % Plot Flat Cylinder
+
+        %h = Cylinder(pipe_centre, pipe_centre2,r_p,40,'black',0,1,0.8,1);
+
+%          figure(1)
+%         clf
+%         xlim([-r_p-300 r_p+300])
+%         ylim([0-300 pipe_length+300])
+%         zlim([-r_p-300 r_p+300])
+%         daspect([1 1 1])
+%         view([-1 -1 1])
+% 
+%         drawnow
+
+
+        %% Save Variables for Plot
+
+        acc_sim_plot(i,:) = acc_sim;
+        acc_inv_plot(i,:) = acc_inv;
+        acc_opt_plot(i,:) = acc_opt;
+
+        angles_sim_plot(i,:) = [a_sim, w_sim];
+        angles_inv_plot(i,:) = angles_inv;
+        angles_opt_plot(i,:) = angles_opt;
+
+
+
+
     end
-    
-    geo(5) = side;
 
-    % Forward Model
-    
-    [wheel_sim, acc_sim] = Forward_Model_Angle(a_sim, w_sim, pipe_angle, geo);
-       
-    acc_x = acc_sim(1);
-    acc_y = acc_sim(2);
-    acc_z = acc_sim(3);
-    
-    hold on   
-    
-    % Inverse Model + Optimisation - (Assuming Horizontal Pipe)
-    
-    [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo);
-    
-    % Plot Inverse Model/Opt
-    
-    
-    
-    % Plot Flat Cylinder
-    
-    h = Cylinder(pipe_centre, pipe_centre2,r_p,40,'black',0,1,0.8,1);
-      
-%     x_imu_sim(i,:) = acc_x;
-%     y_imu_sim(i,:) = acc_y;
-%     z_imu_sim(i,:) = acc_z;
 
-    xlim([-r_p-300 r_p+300])
-    ylim([0-300 pipe_length+300])
-    zlim([-r_p-300 r_p+300])
-    daspect([1 1 1])
-    view([-1 -1 1])
+    %% Calculate Errors
 
-    drawnow
+    inv_acc_error = abs(acc_sim_plot - acc_inv_plot);
+    opt_acc_error = abs(acc_sim_plot - acc_opt_plot);
+
+    inv_angle_error = abs(angles_sim_plot - angles_inv_plot);
+    opt_angle_error = abs(angles_sim_plot - angles_opt_plot);
+
+
+    %% Plot Acceleration Errors
+
+    figure(1)
+    subplot(3,1,1)
+    hold on
+    erplt_accx = plot(angles_sim_plot(:,1),inv_acc_error(:,1),angles_sim_plot(:,1),opt_acc_error(:,1));
+    xlabel('Simulated Alpha')
+    ylabel('Acc X Error')
+    title('ABS Acc X Error')
+    legend('Inverse Error','Optimisation Error')
+
+    subplot(3,1,2)
+    hold on
+    erplt_accy = plot(angles_sim_plot(:,1),inv_acc_error(:,2),angles_sim_plot(:,1),opt_acc_error(:,2));
+    xlabel('Simulated Y Acc')
+    ylabel('Acc Y Error')
+    title('ABS Acc Y Error')
+    legend('Inverse Error','Optimisation Error')
+
+    subplot(3,1,3)
+    hold on
+    erplt_accz = plot(angles_sim_plot(:,1),inv_acc_error(:,3),angles_sim_plot(:,1),opt_acc_error(:,3));
+    xlabel('Simulated Z Acc')
+    ylabel('Acc Z Error')
+    title('ABS Acc Z Error')
+    legend('Inverse Error','Optimisation Error')
+
+
+    set([erplt_accx , erplt_accy ,erplt_accz ],'LineWidth',2)
+
+    %% Plot Angle Errors
+
+    figure(2)
+    subplot(2,1,1)
+    hold on
+    erplt_alpha = plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,1)))*180/pi,angles_sim_plot(:,1),abs(wrapToPi(opt_angle_error(:,1)))*180/pi);
+    xlabel('Simulated Alpha Angle')
+    ylabel('Alpha Error')
+    title('ABS Alpha Error')
+    legend('Inverse Error','Optimisation Error')
+
+    subplot(2,1,2)
+    hold on
+    erplt_omega = plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,2)))*180/pi,angles_sim_plot(:,1),abs(wrapToPi(opt_angle_error(:,2)))*180/pi);
+    xlabel('Simulated Alpha Angle')
+    ylabel('Omega Error')
+    title('ABS Omega Error')
+    legend('Inverse Error','Optimisation Error')
+
+
+    set([erplt_alpha , erplt_omega ],'LineWidth',2)
 
     
-    %% Save Variables for Plot
     
-    acc_sim_plot(i,:) = acc_sim;
-    acc_inv_plot(i,:) = acc_inv;
-    acc_opt_plot(i,:) = acc_opt;
     
-    angles_sim_plot(i,:) = [a_sim, w_sim];
-    angles_inv_plot(i,:) = angles_opt;
-    angles_opt_plot(i,:) = angles_opt;
     
     
     
     
 end
+        
+        
 
 
-%% Calculate Errors
-
-inv_acc_error = abs(acc_sim_plot - acc_inv_plot);
-opt_acc_error = abs(acc_sim_plot - acc_opt_plot);
-
-inv_angle_error = abs(angles_sim_plot - angles_inv_plot);
-opt_angle_error = abs(angles_sim_plot - angles_opt_plot);
-
-
-%% Plot Errors
-
-figure
-subplot(3,1,1)
-erplt_accx = plot(acc_sim_plot(1,:),inv_acc_error(1,:),acc_sim_plot(1,:),opt_acc_error(1,:));
-xlabel('Simulated X Acc')
-ylabel('Acc X Error')
-title('ABS Acc X Error')
-legend('Inverse Error','Optimisation Error')
-
-subplot(3,1,2)
-erplt_accy = plot(acc_sim_plot(2,:),inv_acc_error(2,:),acc_sim_plot(2,:),opt_acc_error(2,:));
-xlabel('Simulated Y Acc')
-ylabel('Acc Y Error')
-title('ABS Acc Y Error')
-legend('Inverse Error','Optimisation Error')
-
-subplot(3,1,3)
-erplt_accz = plot(acc_sim_plot(3,:),inv_acc_error(3,:),acc_sim_plot(3,:),opt_acc_error(3,:));
-xlabel('Simulated Z Acc')
-ylabel('Acc Z Error')
-title('ABS Acc Z Error')
-legend('Inverse Error','Optimisation Error')
-
-
-set([erplt_accx , erplt_accy ,erplt_accz ],'LineWidth',2)
-
-% Plot Errors
-
-a_errors = [abs(all_a(:,1)-all_a(:,2)) abs(all_a(:,1)-all_a(:,3))];
-
-w_errors = [abs(all_w(:,1)-all_w(:,2)) abs(all_w(:,1)-all_w(:,3))];
-
-figure
-subplot(2,1,1)
-erplt1 = plot(all_w(:,1),a_errors(:,1),all_w(:,1),a_errors(:,2));
-xlabel('Simulated Omega')
-ylabel('Alpha Error [°]')
-title('ABS Alpha Error')
-legend('Algorithm Error','Optimisation Error')
-
-subplot(2,1,2)
-erplt2 = plot(all_w(:,1),w_errors(:,1),all_w(:,1),w_errors(:,2));
-xlabel('Simulated Omega')
-ylabel('Omega Error [°]')
-title('ABS Omega Error')
-legend('Algorithm Error','Optimisation Error')
-
-set([erplt1, erplt2],'LineWidth',2)
 
 
 
