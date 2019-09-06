@@ -61,7 +61,7 @@ function [wheel_1, wheel_2, castor] = get_wheels_sph(alpha, omega, geo )
     
     centre_0 = (((wheel_1_0+ wheel_2_0)/2) + castor_0)/2;
     
-     hold on
+%     hold on
 %     scatter3(wheel_1_0(1), wheel_1_0(2), wheel_1_0(3))
 %     scatter3(wheel_2_0(1), wheel_2_0(2), wheel_2_0(3))
 %     scatter3(castor_0(1), castor_0(2), castor_0(3))

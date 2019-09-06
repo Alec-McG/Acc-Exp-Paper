@@ -7,6 +7,7 @@ clear all
 filename = '0_deg_opt.gif';
 folder = '/GIFS';
 %% Pipe Parameters
+do_plot = 1;
 r_p         = 250;
 pipe_length = 500;
 % Create Cylinder
@@ -84,7 +85,7 @@ for i = 1:length(A_sim)
 
     % Forward Model
     
-    [wheel_sim, acc_sim] = Forward_Model_Angle(a_sim, w_sim, pipe_angle, geo);
+    [wheel_sim, acc_sim] = Forward_Model_Angle(a_sim, w_sim, pipe_angle, geo, do_plot);
        
     acc_x = acc_sim(1);
     acc_y = acc_sim(2);
@@ -94,7 +95,7 @@ for i = 1:length(A_sim)
     
     % Inverse Model + Optimisation - (Assuming Horizontal Pipe)
     
-    [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo, plot);
+    [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo, do_plot);
     
     % Plot Inverse Model/Opt
     

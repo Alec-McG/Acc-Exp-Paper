@@ -10,7 +10,7 @@ folder = '/GIFS';
 r_p         = 250;
 pipe_length = 500;
 % Create Cylinder
-pipe_angle = 1*pi/180;
+grav_error = linspace(0,10,11);
 
 pipe_centre = [0  0 0];
 %pipe_centre2 = [0 pipe_length*cos(pipe_angle) pipe_length*sin(pipe_angle)];
@@ -29,12 +29,12 @@ Y_p = 0.5*pipe_length;
 % end
 %% Angles
 %W_sim = linspace(1,355,60);
-A_sim = linspace(5,350,100);
+A_sim = linspace(2,358,100);
 %A_sim(1:length(W_sim))  = 30;
-W_sim(1:length(A_sim)) = 135;
+W_sim(1:length(A_sim)) = 45;
 
-fig1 = figure;
-set(fig1, 'Position', [100, 100, 1000, 900])
+% fig1 = figure;
+% set(fig1, 'Position', [100, 100, 1000, 900])
 
 
     geo(1) = r_p;
@@ -59,13 +59,15 @@ W_pipe = [    0     -rot_ax_pipe(3)    rot_ax_pipe(2)
          rot_ax_pipe(3)      0   -rot_ax_pipe(1)
         -rot_ax_pipe(2)      rot_ax_pipe(1)    0];
     
+plot_bot = 0;
 
-for ii = 1:10
+for ii = 1:length(grav_error)
     for i = 1:length(A_sim) 
-        clf
+        
 
         a_sim = A_sim(i)*pi/180;
         w_sim = W_sim(i)*pi/180;
+        pipe_ang = 0;
 
         % Right and Left side of pipe - Assuming known
 
@@ -84,17 +86,17 @@ for ii = 1:10
 
         % Forward Model
 
-        [wheel_sim, acc_sim] = Forward_Model_Angle(a_sim, w_sim, pipe_angle, geo);
+        [wheel_sim, acc_sim] = Forward_Model_Error(a_sim, w_sim, pipe_ang, geo,grav_error(ii)/100, plot_bot);
 
         acc_x = acc_sim(1);
         acc_y = acc_sim(2);
         acc_z = acc_sim(3);
 
-        hold on   
+        %hold on   
 
         % Inverse Model + Optimisation - (Assuming Horizontal Pipe)
 
-        [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo);
+        [robot_inv, acc_inv, angles_inv, robot_opt, acc_opt, angles_opt ] = Inverse_Model_Opt(acc_x, acc_y, acc_z, geo, plot_bot);
 
         % Plot Inverse Model/Opt
 
@@ -102,19 +104,17 @@ for ii = 1:10
 
         % Plot Flat Cylinder
 
-        h = Cylinder(pipe_centre, pipe_centre2,r_p,40,'black',0,1,0.8,1);
+        %h = Cylinder(pipe_centre, pipe_centre2,r_p,40,'black',0,1,0.8,1);
 
-    %     x_imu_sim(i,:) = acc_x;
-    %     y_imu_sim(i,:) = acc_y;
-    %     z_imu_sim(i,:) = acc_z;
-
-        xlim([-r_p-300 r_p+300])
-        ylim([0-300 pipe_length+300])
-        zlim([-r_p-300 r_p+300])
-        daspect([1 1 1])
-        view([-1 -1 1])
-
-        drawnow
+%          figure(1)
+%         clf
+%         xlim([-r_p-300 r_p+300])
+%         ylim([0-300 pipe_length+300])
+%         zlim([-r_p-300 r_p+300])
+%         daspect([1 1 1])
+%         view([-1 -1 1])
+% 
+%         drawnow
 
 
         %% Save Variables for Plot
@@ -124,7 +124,7 @@ for ii = 1:10
         acc_opt_plot(i,:) = acc_opt;
 
         angles_sim_plot(i,:) = [a_sim, w_sim];
-        angles_inv_plot(i,:) = angles_opt;
+        angles_inv_plot(i,:) = angles_inv;
         angles_opt_plot(i,:) = angles_opt;
 
 
@@ -144,64 +144,89 @@ for ii = 1:10
 
     %% Plot Acceleration Errors
 
-    figure(1)
-    hold on
-    subplot(3,1,1)
-    erplt_accx = plot(angles_sim_plot(:,1),inv_acc_error(:,1),angles_sim_plot(:,1),opt_acc_error(:,1));
-    xlabel('Simulated Alpha')
-    ylabel('Acc X Error')
-    title('ABS Acc X Error')
-    legend('Inverse Error','Optimisation Error')
-
-    subplot(3,1,2)
-    erplt_accy = plot(angles_sim_plot(:,1),inv_acc_error(:,2),angles_sim_plot(:,1),opt_acc_error(:,2));
-    xlabel('Simulated Y Acc')
-    ylabel('Acc Y Error')
-    title('ABS Acc Y Error')
-    legend('Inverse Error','Optimisation Error')
-
-    subplot(3,1,3)
-    erplt_accz = plot(angles_sim_plot(:,1),inv_acc_error(:,3),angles_sim_plot(:,1),opt_acc_error(:,3));
-    xlabel('Simulated Z Acc')
-    ylabel('Acc Z Error')
-    title('ABS Acc Z Error')
-    legend('Inverse Error','Optimisation Error')
-
-
-    set([erplt_accx , erplt_accy ,erplt_accz ],'LineWidth',2)
+%     figure(1)
+%     subplot(3,1,1)
+%     hold on
+%     erplt_accx = plot(angles_sim_plot(:,1),inv_acc_error(:,1),angles_sim_plot(:,1),opt_acc_error(:,1));
+%     xlabel('Simulated Alpha')
+%     ylabel('Acc X Error')
+%     title('ABS Acc X Error')
+%     legend('Inverse Error','Optimisation Error')
+% 
+%     subplot(3,1,2)
+%     hold on
+%     erplt_accy = plot(angles_sim_plot(:,1),inv_acc_error(:,2),angles_sim_plot(:,1),opt_acc_error(:,2));
+%     xlabel('Simulated Y Acc')
+%     ylabel('Acc Y Error')
+%     title('ABS Acc Y Error')
+%     legend('Inverse Error','Optimisation Error')
+% 
+%     subplot(3,1,3)
+%     hold on
+%     erplt_accz = plot(angles_sim_plot(:,1),inv_acc_error(:,3),angles_sim_plot(:,1),opt_acc_error(:,3));
+%     xlabel('Simulated Z Acc')
+%     ylabel('Acc Z Error')
+%     title('ABS Acc Z Error')
+%     legend('Inverse Error','Optimisation Error')
+% 
+% 
+%     set([erplt_accx , erplt_accy ,erplt_accz ],'LineWidth',2)
 
     %% Plot Angle Errors
 
     figure(2)
-    hold on
     subplot(2,1,1)
-    erplt_alpha = plot(angles_sim_plot(:,1),wrapTo2Pi(inv_angle_error(:,1)),angles_sim_plot(:,1),wrapTo2Pi(opt_angle_error(:,1)));
+    hold on
+%     plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,1)))*180/pi, 'Color', [0.5 0 0] + (ii)/ (2*max(pipe_angle)), "linewidth", 2)
+    plot(angles_sim_plot(:,1)*180/pi,abs(wrapToPi(opt_angle_error(:,1)))*180/pi, "linewidth", 2);
     xlabel('Simulated Alpha Angle')
     ylabel('Alpha Error')
     title('ABS Alpha Error')
-    legend('Inverse Error','Optimisation Error')
+%     legend('Inverse Error','Optimisation Error')
 
     subplot(2,1,2)
-    erplt_omega = plot(angles_sim_plot(:,1),wrapTo2Pi(inv_angle_error(:,2)),angles_sim_plot(:,1),wrapTo2Pi(opt_angle_error(:,2)));
+    hold on
+%     plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,2)))*180/pi, 'Color', [0.5 0 0] + (ii)/ (2*max(pipe_angle)), "linewidth", 2)
+    plot(angles_sim_plot(:,1)*180/pi,abs(wrapToPi(opt_angle_error(:,2)))*180/pi, "linewidth", 2);
     xlabel('Simulated Alpha Angle')
     ylabel('Omega Error')
     title('ABS Omega Error')
-    legend('Inverse Error','Optimisation Error')
+%     legend('Inverse Error','Optimisation Error')
 
 
-    set([erplt_alpha , erplt_omega ],'LineWidth',2)
+%    set([erplt_alpha , erplt_omega ],'LineWidth',2)
 
     
-    
-    
-    
+    alpha_error_max(ii) = max(abs(wrapToPi(opt_angle_error(:,1)))*180/pi);    
+    omega_error_max(ii) = max(abs(wrapToPi(opt_angle_error(:,2)))*180/pi);
+
     
     
     
 end
         
-        
+figure(2)
+    subplot(2,1,1)
+         xlim([0 360]);    
+    legend(  sprintf('g error: %d', grav_error(1)), sprintf('g error: %d', grav_error(2)),...
+             sprintf('g error: %d', grav_error(3)), sprintf('g error: %d', grav_error(4)),...
+             sprintf('g error: %d', grav_error(5)), sprintf('g error: %d', grav_error(6)),...
+             sprintf('g error: %d', grav_error(7)), sprintf('g error: %d', grav_error(8)),...
+             sprintf('g error: %d', grav_error(9)), sprintf('g error: %d', grav_error(10)),...
+             sprintf('g error: %d', grav_error(11)),...
+             'location', 'eastoutside')
 
+
+         
+    subplot(2,1,2)
+    xlim([0 360]);
+    legend(  sprintf('g error: %d', grav_error(1)), sprintf('g error: %d', grav_error(2)),...
+             sprintf('g error: %d', grav_error(3)), sprintf('g error: %d', grav_error(4)),...
+             sprintf('g error: %d', grav_error(5)), sprintf('g error: %d', grav_error(6)),...
+             sprintf('g error: %d', grav_error(7)), sprintf('g error: %d', grav_error(8)),...
+             sprintf('g error: %d', grav_error(9)), sprintf('g error: %d', grav_error(10)),...
+             sprintf('g error: %d', grav_error(11)),...
+             'location', 'eastoutside')
 
 
 

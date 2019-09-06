@@ -1,9 +1,6 @@
-function [T, Rx, Ry, Rz, robot_angle] = plot_robot_3d(p, co, do_plot, fig)
+function [T, Rx, Ry, Rz, robot_angle] = plot_robot_3d(p, co, do_plot)
 
 
-hold on
-
-fmt = {'Fontsize' 12, 'Fontweight', 'b'};
 
 if(~exist('co','var'))
     co = 'b';
@@ -15,6 +12,12 @@ end
 
 % Plot the wheels
 if(do_plot == 1)
+    
+    hold on
+
+    fmt = {'Fontsize' 12, 'Fontweight', 'b'};
+
+
     plot3(p(:,1), p(:,2), p(:,3),'.', 'color',co, 'Markersize', 20);
 end
 
