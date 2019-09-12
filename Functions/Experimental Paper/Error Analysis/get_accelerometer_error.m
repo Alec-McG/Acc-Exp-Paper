@@ -10,6 +10,6 @@ Ayr = angle_between_vectors([0 0 -1], y_vec);
 Azr = angle_between_vectors([0 0 -1], z_vec);
 
 R = 9.81; 
-Rx = R*cos(Axr)+(R*grav_error);
-Ry = R*cos(Ayr);
-Rz = R*cos(Azr);
+Rx = R*cos(Axr)+(R*grav_error(1));
+Ry = R*cos(Ayr)+(R*grav_error(2));
+Rz = R*cos(Azr)+(R*grav_error(3));

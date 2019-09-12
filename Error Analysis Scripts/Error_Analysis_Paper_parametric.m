@@ -10,7 +10,7 @@ folder = '/GIFS';
 r_p         = 250;
 pipe_length = 500;
 % Create Cylinder
-pipe_angle = linspace(0,5,6);
+pipe_angle = linspace(-5,5,6);
 
 pipe_centre = [0  0 0];
 %pipe_centre2 = [0 pipe_length*cos(pipe_angle) pipe_length*sin(pipe_angle)];
@@ -29,9 +29,9 @@ Y_p = 0.5*pipe_length;
 % end
 %% Angles
 %W_sim = linspace(1,355,60);
-A_sim = linspace(1,359,100);
+A_sim = linspace(2,359,100);
 %A_sim(1:length(W_sim))  = 30;
-W_sim(1:length(A_sim)) = 135;
+W_sim(1:length(A_sim)) = 90;
 
 % fig1 = figure;
 % set(fig1, 'Position', [100, 100, 1000, 900])
@@ -136,12 +136,12 @@ for ii = 1:length(pipe_angle)
 
     %% Calculate Errors
 
-    inv_acc_error = abs(acc_sim_plot - acc_inv_plot)*180/pi;
-    opt_acc_error = abs(acc_sim_plot - acc_opt_plot)*180/pi;
+    inv_acc_error = (acc_sim_plot - acc_inv_plot)*180/pi;
+    opt_acc_error = (acc_sim_plot - acc_opt_plot)*180/pi;
 
-    inv_angle_error = abs(angles_sim_plot - angles_inv_plot)*180/pi;
-    opt_angle_error = abs(angles_sim_plot - angles_opt_plot)*180/pi;
-
+    inv_angle_error = (angles_sim_plot - angles_inv_plot)*180/pi;
+    opt_angle_error = (angles_sim_plot - angles_opt_plot);
+    max_opt_error(ii,1:2) = max(opt_angle_error); 
 
     %% Plot Acceleration Errors
 
@@ -179,55 +179,66 @@ for ii = 1:length(pipe_angle)
     subplot(2,1,1)
     hold on
 %     plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,1)))*180/pi, 'Color', [0.5 0 0] + (ii)/ (2*max(pipe_angle)), "linewidth", 2)
-    plot(angles_sim_plot(:,1),abs(wrapToPi(opt_angle_error(:,1))), "linewidth", 2);
-    xlabel('Simulated Alpha Angle')
-    ylabel('Alpha Error')
-    title('ABS Alpha Error')
+    plot(angles_sim_plot(:,1)*180/pi,((wrapToPi(opt_angle_error(:,1)))*180/pi), "linewidth", 2);
+    xlabel('Simulated \alpha Angle [°]')
+    ylabel('\alpha Error [°]')
+    title('\alpha Error')
 %     legend('Inverse Error','Optimisation Error')
 
     subplot(2,1,2)
     hold on
 %     plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,2)))*180/pi, 'Color', [0.5 0 0] + (ii)/ (2*max(pipe_angle)), "linewidth", 2)
-    plot(angles_sim_plot(:,1),abs(wrapToPi(opt_angle_error(:,2))), "linewidth", 2);
-    xlabel('Simulated Alpha Angle')
-    ylabel('Omega Error')
-    title('ABS Omega Error')
+    plot(angles_sim_plot(:,1)*180/pi,(wrapToPi(opt_angle_error(:,2))*180/pi), "linewidth", 2);
+    xlabel('Simulated \alpha Angle [°]')
+    ylabel('\omega Error [°]')
+    title('\omega Error')
+    
+    
 %     legend('Inverse Error','Optimisation Error')
-
 
 %    set([erplt_alpha , erplt_omega ],'LineWidth',2)
 
-    
-    
-    
-    
-    
-    
-    
 end
         
 figure(2)
     subplot(2,1,1)
-         xlim([0 2*pi]);    
-    legend(  sprintf('Pipe Angle: %d', pipe_angle(1)), sprintf('Pipe Angle: %d', pipe_angle(2)),...
-             sprintf('Pipe Angle: %d', pipe_angle(3)), sprintf('Pipe Angle: %d', pipe_angle(4)),...
-             sprintf('Pipe Angle: %d', pipe_angle(5)), sprintf('Pipe Angle: %d', pipe_angle(6)),...
+         xlim([0 360]);    
+    legend(  sprintf('Pipe Angle: %d °', pipe_angle(1)), sprintf('Pipe Angle: %d °', pipe_angle(2)),...
+             sprintf('Pipe Angle: %d °', pipe_angle(3)), sprintf('Pipe Angle: %d °', pipe_angle(4)),...
+             sprintf('Pipe Angle: %d °', pipe_angle(5)), sprintf('Pipe Angle: %d °', pipe_angle(6)),...
              'location', 'eastoutside')
 
 
          
     subplot(2,1,2)
-    xlim([0 2*pi]);
+    xlim([0 360]);
      
-    legend(  sprintf('Pipe Angle: %d', pipe_angle(1)), sprintf('Pipe Angle: %d', pipe_angle(2)),...
-             sprintf('Pipe Angle: %d', pipe_angle(3)), sprintf('Pipe Angle: %d', pipe_angle(4)), ...
-             sprintf('Pipe Angle: %d', pipe_angle(5)), sprintf('Pipe Angle: %d', pipe_angle(6)),...
+    legend(  sprintf('Pipe Angle: %d °', pipe_angle(1)), sprintf('Pipe Angle: %d °', pipe_angle(2)),...
+             sprintf('Pipe Angle: %d °', pipe_angle(3)), sprintf('Pipe Angle: %d °', pipe_angle(4)), ...
+             sprintf('Pipe Angle: %d °', pipe_angle(5)), sprintf('Pipe Angle: %d °', pipe_angle(6)),...
              'location', 'eastoutside')
 
 
 
 
+    figure
+    subplot(2,1,1)
+    hold on
+%     plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,1)))*180/pi, 'Color', [0.5 0 0] + (ii)/ (2*max(pipe_angle)), "linewidth", 2)
+    plot(pipe_angle,wrapToPi(max_opt_error(:,1))*180/pi, "linewidth", 2);
+    xlabel('Simulated \alpha Angle [°]')
+    ylabel('\alpha Error [°]')
+    title('\alpha Error')
+%     legend('Inverse Error','Optimisation Error')
 
+    subplot(2,1,2)
+    hold on
+%     plot(angles_sim_plot(:,1),abs(wrapToPi(inv_angle_error(:,2)))*180/pi, 'Color', [0.5 0 0] + (ii)/ (2*max(pipe_angle)), "linewidth", 2)
+    plot(pipe_angle,wrapToPi(max_opt_error(:,2))*180/pi, "linewidth", 2);
+    xlabel('Simulated \alpha Angle [°]')
+    ylabel('\omega Error [°]')
+    title('\omega Error')
+    
 
 %% Plots WRT OMEGA
 %line = linspace(0,1,length(A_sim));

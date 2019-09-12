@@ -11,7 +11,7 @@ do_plot = 1;
 r_p         = 250;
 pipe_length = 500;
 % Create Cylinder
-pipe_angle = 1*pi/180;
+pipe_angle = 0*pi/180;
 
 pipe_centre = [0  0 0];
 %pipe_centre2 = [0 pipe_length*cos(pipe_angle) pipe_length*sin(pipe_angle)];
@@ -42,6 +42,7 @@ set(fig1, 'Position', [100, 100, 1000, 900])
     geo(2) = b; 
     geo(3) = l;
     geo(4) = Y_p;
+    geo(6) = pipe_angle;
 
     
 % Rotation for w angle
@@ -195,90 +196,3 @@ set([erplt_alpha , erplt_omega ],'LineWidth',2)
 
 
 
-
-%% Plots WRT OMEGA
-%line = linspace(0,1,length(A_sim));
-
-% Angles
-% figure
-% subplot(2,1,1)
-% plot1 = plot(W_sim,all_a(:,1),'-o',W_sim,all_a(:,2),':s',W_sim, all_a(:,3),'-.*','markers',3);
-% title('Alpha vs. Omega')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Alphas [°]')
-% 
-% subplot(2,1,2)
-% plot2 = plot(W_sim,all_w(:,1),'-o',W_sim,all_w(:,2),':s',W_sim, all_w(:,3),'-.*','markers',3);
-% title('Omega vs. Omega')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Omegas [°]')
-% 
-% set([plot1, plot2],'LineWidth',2)
-% % Accelerometer 
-% figure
-% subplot(3,1,1)
-% plot3 = plot(W_sim,x_imu_sim,'-o',W_sim,x_imu_algo,':s',W_sim, x_imu_opt,'-.*','markers',3);
-% title('X ACCEL')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Acc [mm/s^2]')
-% 
-% subplot(3,1,2)
-% plot4 = plot(W_sim,y_imu_sim,'-o',W_sim,y_imu_algo,':s',W_sim, y_imu_opt,'-.*','markers',3);
-% title('Y ACCEL')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Acc [mm/s^2]')
-% 
-% subplot(3,1,3)
-% plot5 = plot(W_sim,z_imu_sim,'-o',W_sim,z_imu_algo,':s',W_sim, z_imu_opt,'-.*','markers',3);
-% title('Z ACCEL')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Acc [mm/s^2]')
-% 
-% set([plot3, plot4, plot5],'LineWidth',2)
-%% Plots WRT ALPHA
-
-% figure
-% subplot(2,1,1)
-% plot1 = plot(A_sim,all_a(:,1),'-o',A_sim,all_a(:,2),':s',A_sim, all_a(:,3),'-.*','markers',3);
-% title('Alpha vs. Omega')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Alpha [°]')
-% ylabel('Alphas [°]')
-% 
-% subplot(2,1,2)
-% plot2 = plot(A_sim,all_w(:,1),'-o',A_sim,all_w(:,2),':s',A_sim, all_w(:,3),'-.*','markers',3);
-% title('Omega vs. Omega')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Omegas [°]') 
-
-% set([plot1, plot2],'LineWidth',2)
-% % Accelerometer 
-% figure
-% subplot(3,1,1)
-% plot3 = plot(A_sim,x_imu_sim,'-o',A_sim,x_imu_algo,':s',A_sim, x_imu_opt,'-.*','markers',3);
-% title('X ACCEL')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Acc [mm/s^2]')
-
-% subplot(3,1,2)
-% plot4 = plot(A_sim,y_imu_sim,'-o',A_sim,y_imu_algo,':s',A_sim, y_imu_opt,'-.*','markers',3);
-% title('Y ACCEL')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Acc [mm/s^2]')
-
-% subplot(3,1,3)
-% plot5 = plot(A_sim,z_imu_sim,'-o',A_sim,z_imu_algo,':s',A_sim, z_imu_opt,'-.*','markers',3);
-% title('Z ACCEL')
-% legend('Simulated','Algorithm','Optimisation')
-% xlabel('Simulated Omega [°]')
-% ylabel('Acc [mm/s^2]')
-
-% set([plot3, plot4, plot5],'LineWidth',2)

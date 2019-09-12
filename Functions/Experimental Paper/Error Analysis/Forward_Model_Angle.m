@@ -30,6 +30,6 @@ function [wheels, acc] = Forward_Model_Angle(alpha, omega, pipe_angle, geo, plot
     [T, acc_x, acc_y, acc_z, robot_angle] = plot_robot_3d(robot,'g',plot);
 
     
-    wheels = [wheel_1, wheel_2, castor];
-    acc = [acc_x, acc_y, acc_z];
+    wheels = [wheel_1; wheel_2; castor];
+    acc = [acc_x, acc_y acc_z];
 end
