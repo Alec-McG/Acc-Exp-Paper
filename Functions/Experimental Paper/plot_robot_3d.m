@@ -17,8 +17,8 @@ if(do_plot == 1)
 
     fmt = {'Fontsize' 12, 'Fontweight', 'b'};
 
-
-    plot3(p(:,1), p(:,2), p(:,3),'.', 'color',co, 'Markersize', 20);
+    % Plot wheel points
+    %plot3(p(:,1), p(:,2), p(:,3),'.', 'color',co, 'Markersize', 20);
 end
 
 % Plot the chassis

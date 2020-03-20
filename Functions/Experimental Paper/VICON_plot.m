@@ -42,8 +42,8 @@ quat_p = [rw_p, rx_p, ry_p, rz_p];
 %% Plot Real Pipe and Robot from Raw VICON Data
 
 x = [250 0 0];
-y = [0 250 0];
-z = [0 0 250];
+y = [0 -250 0];
+z = [0 0 -250];
 
 quat_p_inv = quatinv(quat_p);
 quat_r_inv = quatinv(quat_r);
@@ -150,7 +150,7 @@ x_rob_shift = r_c_cor*x_vec;
 x_rob_shifted = vicon_point_straight - x_rob_shift;
 vicon_point_straight = x_rob_shifted;
 
-figure
+%figure
 hold on
 title('Rotated by Pipe Quaternion')
 Cylinder( pipe_c_1_stra, pipe_c_2_stra,253.5,40,'black',0,1,0.1,1)
@@ -158,10 +158,9 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 
-quiver3(vicon_point_straight(1), vicon_point_straight(2),vicon_point_straight(3), x_ax_rob(1), x_ax_rob(2), x_ax_rob(3),'color', 'r')
-quiver3(vicon_point_straight(1), vicon_point_straight(2),vicon_point_straight(3), y_ax_rob(1), y_ax_rob(2), y_ax_rob(3),'color', 'g')
-quiver3(vicon_point_straight(1), vicon_point_straight(2),vicon_point_straight(3), z_ax_rob(1), z_ax_rob(2), z_ax_rob(3),'color', 'b')
-
+quiver3(vicon_point_straight(1), vicon_point_straight(2),vicon_point_straight(3), x_ax_rob(1), x_ax_rob(2), x_ax_rob(3),'color', 'r','Linewidth',2)
+quiver3(vicon_point_straight(1), vicon_point_straight(2),vicon_point_straight(3), y_ax_rob(1), y_ax_rob(2), y_ax_rob(3),'color', 'g','Linewidth',2)
+quiver3(vicon_point_straight(1), vicon_point_straight(2),vicon_point_straight(3), z_ax_rob(1), z_ax_rob(2), z_ax_rob(3),'color', 'b','Linewidth',2)
 
 hold off
     
@@ -204,7 +203,15 @@ vicon_alpha_deg = vicon_alpha*180/pi;
 %   
     hold on
     
+    
+    
     [T, acc_x_sim_vicon, acc_y_sim_vicon, acc_z_sim_vicon, robot_angle] = plot_robot_3d(robot,'k',1);
+    
+    % Wheel colours
+    scatter3(wheel_1(1),wheel_1(2),wheel_1(3),'r','filled')
+    scatter3(wheel_2(1),wheel_2(2),wheel_2(3),'r','filled')
+    scatter3(castor(1),castor(2),castor(3),'g','filled')
+    
     
     accel_sim_vicon = [acc_x_sim_vicon acc_y_sim_vicon acc_z_sim_vicon];
 

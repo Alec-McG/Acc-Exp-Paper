@@ -52,8 +52,6 @@ no_of_files = 10;
 xAxOmega = linspace(1,360,no_of_files);
 xAxAlpha = linspace(1,360,no_of_files);
 
-
-
 for i = 1:no_of_files
 
 %    VICON Analysis Code
@@ -74,7 +72,6 @@ for i = 1:no_of_files
     % For Forward Model Paper
     
     accel_sim_vicon_list(i,:) = accel_sim_vicon;
-    
     
     % IMU Analysis Code
        file_mti300 = sprintf('omega%d-000.csv',i); %
@@ -98,8 +95,6 @@ for i = 1:no_of_files
     
     %% Parametric Study Comparison
     
-    
-    
 xlim([-110 - 250 -110 + 250])
 ylim([550 - 250 550 + 250])
 zlim([250 - 250 250 + 250])
@@ -118,6 +113,23 @@ zlim([250 - 250 250 + 250])
       else 
           imwrite(imind,cm,filename,'gif','WriteMode','append'); 
       end 
+      
+end
+
+%% Just Vicon Plot
+
+for i = 1:no_of_files
+    
+%    VICON Analysis Code
+      vicon_file = sprintf('omega %d.csv',i);
+%    vicon_file = sprintf('long_tri_omega %d.csv',i);
+%    vicon_file = sprintf('long_tri_alpha %d.csv',i);
+    
+    vicon_data = csvread(vicon_file,5,2);
+    vicon_data = mean(vicon_data(10:20,:));
+    
+    [accel_sim_vicon, x_axis, y_axis, z_axis, vicon_omega, vicon_alpha, vicon_point, side] = VICON_plot(vicon_data,geo_know)   ;
+   
 end
 
 figure
@@ -160,19 +172,12 @@ figure
     
 for ii = 1:no_of_files
     
-    
-
-
 %     plot(xAxOmega(ii), eOmegaAlgo(ii),'-ro', 'LineWidth',2)
 %     plot(xAxOmega(ii), eOmegaOpto(ii),'--mx', 'linewidth',2)
-
-
 
 %     plot(xAxAlpha(ii), eAlphaAlgo(ii),'-ro', 'linewidth',2)
 %     plot(xAxAlpha(ii), eAlphaOpto(ii),'--mx', 'linewidth',2)
 
-
-%     
 %     subplot(2,1,2)
 %     addpoints(an_omega_opt, xAxOmega(ii), eOmegaOpto(ii));
 %     addpoints(an_omega_alg, xAxOmega(ii), eOmegaAlgo(ii));
@@ -190,12 +195,8 @@ for ii = 1:no_of_files
 %         else 
 %             imwrite(imind,cm,filename,'gif','WriteMode','append'); 
 %         end 
-% 
-% 
-%     
     
 end
-
 
 zero_lin = linspace(1,360,360);
 zero_lin2 = zeros(length(zero_lin),1);
